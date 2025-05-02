@@ -1,28 +1,31 @@
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.Socket;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.util.List;
 
-public class Task implements Runnable {
+public class Task {
     Socket socket;
     BufferedReader in;
     BufferedOutputStream out;
     List validPaths;
 
-    public Task(Socket socket, BufferedReader in, BufferedOutputStream out, List validPaths) {
+    public Task(Socket socket, List validPaths) {
         this.socket = socket;
         this.in = in;
         this.out = out;
         this.validPaths = validPaths;
     }
 
-    @Override
     public void run() {
-        try {
+        try (
+                final var in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                final var out = new BufferedOutputStream(socket.getOutputStream());
+        ) {
             final var parts = in.readLine().split(" ");
 
             if (parts.length != 3) {

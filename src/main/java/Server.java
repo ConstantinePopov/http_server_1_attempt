@@ -9,33 +9,30 @@ import java.util.concurrent.Executors;
 
 public class Server {
     private int socketNumber;
-    private int numberOfThreads;
     ExecutorService threadPool;
+    final List<String> validPaths = List.of("/index.html", "/spring.svg", "/spring.png", "/resources.html", "/styles.css", "/app.js", "/links.html", "/forms.html", "/classic.html", "/events.html", "/events.js");
+
 
     public Server(int socketNumber, int numberOfThreads) {
         this.socketNumber = socketNumber;
-        this.numberOfThreads = numberOfThreads;
+        this.threadPool = Executors.newFixedThreadPool(numberOfThreads);
     }
 
-    public void start(List validPaths) throws IOException {
+    public void start() throws IOException {
         try (final var serverSocket = new ServerSocket(socketNumber)) {
-            threadPool = Executors.newFixedThreadPool(numberOfThreads);
             while (true) {
-                try (
-                        final var socket = serverSocket.accept();
-                        final var in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-                        final var out = new BufferedOutputStream(socket.getOutputStream());
-                ) {
-                    Task task = new Task(socket, in, out, validPaths);
-                    threadPool.execute(task);
+                try {
+                    final var socket = serverSocket.accept();
+                    Task task = new Task(socket, validPaths);
+                    threadPool.submit(() -> task.run());
                 } catch (IOException e) {
                     System.out.println("Что-то не так с сервером...");
-                } finally {
-                    threadPool.shutdown();
                 }
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
+        }finally {
+            threadPool.shutdown();
         }
 
     }
