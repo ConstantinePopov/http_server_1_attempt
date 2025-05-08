@@ -1,8 +1,6 @@
-import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.Socket;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
@@ -23,7 +21,9 @@ public class Task {
 
     public void run() {
         try (
-                final var in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                final var dataFromSocket = socket.getInputStream();
+                final var in = new BufferedReader(new InputStreamReader(dataFromSocket));
+                final var inn = new BufferedInputStream(dataFromSocket);
                 final var out = new BufferedOutputStream(socket.getOutputStream());
         ) {
             final var parts = in.readLine().split(" ");
@@ -74,8 +74,12 @@ public class Task {
                     }
                 }
             }
+            Request request = new Request();
+            request.parseRequest(inn);
         } catch (IOException e) {
             System.out.println("Задача не выполняется.");
+            throw new RuntimeException(e);
+        } catch (URISyntaxException e) {
             throw new RuntimeException(e);
         }
     }
