@@ -1,3 +1,4 @@
+import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URLEncodedUtils;
 import java.io.BufferedInputStream;
 import java.io.IOException;
@@ -10,6 +11,7 @@ import java.util.List;
 public class Request {
     public static final String GET = "GET";
     public static final String POST = "POST";
+    private List<NameValuePair> params;
 
     public void parseRequest(BufferedInputStream in) throws IOException, URISyntaxException {
 
@@ -64,9 +66,12 @@ public class Request {
 
         //парсим реквест с помощью URLEncodedUtils.parse
 
-        List params = URLEncodedUtils.parse(new URI(path), StandardCharsets.UTF_8);
-        System.out.println(params);
+        List<NameValuePair> params = URLEncodedUtils.parse(new URI(path), StandardCharsets.UTF_8);
 
+    }
+
+    public List<NameValuePair> getQueryParams() {
+        return params;
     }
 
     // from google guava with modifications
