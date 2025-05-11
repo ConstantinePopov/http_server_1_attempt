@@ -13,6 +13,14 @@ public class Request {
     public static final String POST = "POST";
     private List<NameValuePair> params;
 
+    public Request() {
+
+    }
+
+    public Request(List<NameValuePair> params) {
+        this.params = params;
+    }
+
     public void parseRequest(BufferedInputStream in) throws IOException, URISyntaxException {
 
         final var allowedMethods = List.of(GET, POST);
