@@ -17,9 +17,6 @@ public class Request {
 
     }
 
-    public Request(List<NameValuePair> params) {
-        this.params = params;
-    }
 
     public void parseRequest(BufferedInputStream in) throws IOException, URISyntaxException {
 
@@ -74,7 +71,7 @@ public class Request {
 
         //парсим реквест с помощью URLEncodedUtils.parse
 
-        List<NameValuePair> params = URLEncodedUtils.parse(new URI(path), StandardCharsets.UTF_8);
+        params = URLEncodedUtils.parse(new URI(path), StandardCharsets.UTF_8);
 
     }
 
